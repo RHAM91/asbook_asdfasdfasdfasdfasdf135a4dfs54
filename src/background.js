@@ -1,11 +1,12 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, Menu, ipcMain } from 'electron'
+import { app, protocol, BrowserWindow, Menu, ipcMain, dialog } from 'electron'
 import {
   createProtocol,
   installVueDevtools
 } from 'vue-cli-plugin-electron-builder/lib'
 import { autoUpdater } from 'electron-updater'
+import excel from 'xlsx'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -65,6 +66,7 @@ function createWindow () {
   }
 
   actualizacion = setInterval(buscarActualizacion, 10 * 60 * 1000) // para cambiar el tiempo del intervalo em minutos, modificar solo el primer 60
+
 
   win.on('closed', () => {
     win = null
@@ -171,6 +173,41 @@ ipcMain.on('ok_update', (event) =>{
 
 ipcMain.on('vale_salida', (event, args)=>{
   shell.openExternal(args)
+})
+
+ipcMain.on('excel', (event,args)=>{
+
+  let data = excel.utils.json_to_sheet(args)
+  const workbook = excel.utils.book_new()
+  const filename = 'Reporte'
+  excel.utils.book_append_sheet(workbook, data, filename)
+
+
+  dialog.showSaveDialog({}).then((result)=>{
+
+    if (!result.canceled) {
+  
+      excel.writeFile(workbook, `${result.filePath}.xlsx`)
+      const dialogOpts = {
+        type: 'info',
+        buttons: ['Aceptar'],
+        title: 'Información',
+        message: `Archivo guardado con éxito`
+      }
+
+      dialog.showMessageBox(dialogOpts).then(({ response }) => {
+        if (response === 0) console.log('nada')
+      })
+      
+    }
+    
+
+
+  }).catch((err)=>{
+    console.log(err)
+  })
+
+
 })
 
 

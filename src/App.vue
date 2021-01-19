@@ -28,7 +28,7 @@
 
 import Reporte from '@/components/Reporte.vue'
 import { ipcRenderer } from 'electron'
-window.ipcRenderer = ipcRenderer
+//window.ipcRenderer = ipcRenderer
 
 export default {
   name: 'app',

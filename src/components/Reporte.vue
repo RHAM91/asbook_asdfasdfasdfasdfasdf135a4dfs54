@@ -129,10 +129,7 @@
 
 import axios from 'axios'
 import { IP, PUERTO } from '../config/parametros'
-import excel from 'xlsx'
-
-
-const { dialog } = require('electron').remote
+import { dialog, ipcRenderer } from 'electron'
 //const fs = require('fs')
 
 export default {
@@ -147,7 +144,7 @@ export default {
             year: '',
             loading: false,
             timeout: false,
-            img: require(`@/assets/ripple2.gif`), // require(`@/assets/${localStorage.getItem('GIF')}.gif`)
+            img: require(`@/assets/ripple2.gif`), // require(`@/assets/${localStorage.getItem('GIF')}.gif`),
             
         }
     },
@@ -171,64 +168,72 @@ export default {
                     let arr = dat.data
                     this.datos = arr
 
-                
-                if (arr.length > 0) {
-                    await console.log('carga completa')
-                }else{
-                    await console.log('hubo algun problema con la conexion al servidor')
-                }
-            
-                    for (let i = 0; i < arr.length; i++) {
-                        const e = arr[i];
-                        
-                        let newForm = {
-
-                            Establecimiento: this.establecimiento,
-                            Compras_Ventas: e.verbo,
-                            Documento: e.tipoFactura,
-                            Serie_del_documento: e.serie,
-                            Numero_del_documento: e.Nofi,
-                            Fecha_del_documento: e.fechaFactura,
-                            Nit_cliente_proveedor: e.codigoProveedor,
-                            Nombre_cliente_proveedor: e.nombreProveedor,
-                            Tipo_de_transaccion: 'L',
-                            Tipo_de_operacion: e.tipoOperacion,
-                            Estado_del_documento: e.estado,
-                            COLUMNA_L: '',
-                            COLUMNA_M: '',
-                            COLUMNA_N: '',
-                            COLUMNA_O: '',
-                            Total_valor_Bienes_local: parseFloat(e.montoBienes),
-                            Total_valor_Bienes_exterior: 0,
-                            Total_valor_Servicios_local: parseFloat(e.montoServicios),
-                            Total_valor_Servicios_exterior: '0',
-                            COLUMNA_T: '',
-                            COLUMNA_U: '',
-                            COLUMNA_V: '',
-                            COLUMNA_W: '',
-                            COLUMNA_X: '',
-                            COLUMNA_Y: '',
-                            COLUMNA_Z: '',
-                            Pequeno_contribuyente_total_Bienes: parseFloat(e.montoBienesP),
-                            Pequeno_contribuyente_total_Servicios: parseFloat(e.montoServiciosP),
-                            COLUMNA_AC: '',
-                            COLUMNA_AD: '',
-                            IVA: parseFloat(e.iva),
-                            Total_valor_documento: parseFloat(e.totalDocumento),
-
-                        }
-
-                        this.datosExcel.push(newForm)
-                    }
-
-                    await this.get_ventas()
-
-
-                    if (arr.length > 0) {
+                    if (dat.data == null) {
+                        alert('No hay datos....')
                         this.loading = false
+
                     }else{
-                        await console.log('Ha habido un error interno en el servidor')
+
+                        if (arr.length > 0) {
+                            await console.log('carga completa')
+                        }else{
+                            await console.log('hubo algun problema con la conexion al servidor')
+                        }
+                    
+                        for (let i = 0; i < arr.length; i++) {
+                            const e = arr[i];
+                            
+                            let newForm = {
+    
+                                Establecimiento: this.establecimiento,
+                                Compras_Ventas: e.verbo,
+                                Documento: e.tipoFactura,
+                                Serie_del_documento: e.serie,
+                                Numero_del_documento: e.Nofi,
+                                Fecha_del_documento: e.fechaFactura,
+                                Nit_cliente_proveedor: e.codigoProveedor,
+                                Nombre_cliente_proveedor: e.nombreProveedor,
+                                Tipo_de_transaccion: 'L',
+                                Tipo_de_operacion: e.tipoOperacion,
+                                Estado_del_documento: e.estado,
+                                COLUMNA_L: '',
+                                COLUMNA_M: '',
+                                COLUMNA_N: '',
+                                COLUMNA_O: '',
+                                Total_valor_Bienes_local: parseFloat(e.montoBienes),
+                                Total_valor_Bienes_exterior: 0,
+                                Total_valor_Servicios_local: parseFloat(e.montoServicios),
+                                Total_valor_Servicios_exterior: '0',
+                                COLUMNA_T: '',
+                                COLUMNA_U: '',
+                                COLUMNA_V: '',
+                                COLUMNA_W: '',
+                                COLUMNA_X: '',
+                                COLUMNA_Y: '',
+                                COLUMNA_Z: '',
+                                Pequeno_contribuyente_total_Bienes: parseFloat(e.montoBienesP),
+                                Pequeno_contribuyente_total_Servicios: parseFloat(e.montoServiciosP),
+                                COLUMNA_AC: '',
+                                COLUMNA_AD: '',
+                                IVA: parseFloat(e.iva),
+                                Total_valor_documento: parseFloat(e.totalDocumento),
+    
+                            }
+    
+                            this.datosExcel.push(newForm)
+                        }
+    
+                        await this.get_ventas()
+    
+    
+                        if (arr.length > 0) {
+                            this.loading = false
+                        }else{
+                            await console.log('Ha habido un error interno en el servidor')
+                        }
                     }
+
+                
 
                 } catch (e) {
 
@@ -304,41 +309,14 @@ export default {
         },
         generar_excel: function(){
 
-            let data = excel.utils.json_to_sheet(this.datosExcel)
-                const workbook = excel.utils.book_new()
-                const filename = 'Reporte'
-                excel.utils.book_append_sheet(workbook, data, filename)
-                //excel.writeFile(workbook, `${fileName}/${filename}.xlsx`)
 
+            ipcRenderer.send('excel', this.datosExcel);
             
-            
-
-            dialog.showSaveDialog(function(fileName){
-                if (fileName === undefined) {
-                    console.log("no se guardó nada");
-                    return;
-                }
-
-               
-
-               excel.writeFile(workbook, `${fileName}.xlsx`)
-
-               alert('Archivo guardado correctamente')
-               
-
-                /* fs.writeFile(fileName, content, function (err) {
-                    if(err){
-                        alert("Ha ocurrido un error creando el archivo: "+ err.message)
-                    }
-                                    
-                    alert("El archivo ha sido creado satisfactoriamente");
-                }); */
-
-            })
-
-        
             this.datos = []
             this.datosExcel = []
+            this.year = ''
+            this.mes = ''
+            this.establecimiento = ''
 
 
         }
