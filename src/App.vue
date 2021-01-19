@@ -7,7 +7,7 @@
         <div class="boton_menu" @click="seleccionar_modulo('reportes')">
             Reporte
         </div>
-        <div v-if="update == false" class="version" id="version" @click="show = !show">
+        <div v-if="update == false" style="color: white;" id="version">
             hola mundo
         </div>
         <div v-else class="btn_update" @click="pushversion">
