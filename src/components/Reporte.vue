@@ -147,7 +147,8 @@ export default {
             year: '',
             loading: false,
             timeout: false,
-            img: require(`@/assets/ripple2.gif`) // require(`@/assets/${localStorage.getItem('GIF')}.gif`)
+            img: require(`@/assets/ripple2.gif`), // require(`@/assets/${localStorage.getItem('GIF')}.gif`)
+            
         }
     },
     methods:{

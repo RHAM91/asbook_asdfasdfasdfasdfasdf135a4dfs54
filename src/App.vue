@@ -7,6 +7,12 @@
         <div class="boton_menu" @click="seleccionar_modulo('reportes')">
             Reporte
         </div>
+        <div v-if="update == false" class="version" id="version" @click="show = !show">
+            hola mundo
+        </div>
+        <div v-else class="btn_update" @click="pushversion">
+            push meee
+        </div>
     </div>
     <div class="contenedor">
         <div class="toppanel">
@@ -21,6 +27,8 @@
 <script>
 
 import Reporte from '@/components/Reporte.vue'
+import { ipcRenderer } from 'electron'
+window.ipcRenderer = ipcRenderer
 
 export default {
   name: 'app',
@@ -29,14 +37,33 @@ export default {
   },
   data(){
       return{
-          modulo: 'reportes'
+          modulo: 'reportes',
+          update: false, // debe estar en false
+          version: ''
       }
   },
   methods:{
       seleccionar_modulo: function(mod){
           this.modulo = mod
-      }
-  }
+      },
+      getversion(){
+            ipcRenderer.send('app_version');
+
+            ipcRenderer.on('app_version', (event, arg) => {
+                ipcRenderer.removeAllListeners('app_version');
+                this.version = arg.version
+            });
+
+            // Evento para mostrar el boton de actualizacion en el sistema
+
+            ipcRenderer.on('actualizacion', (event, message)=>{
+                this.update = message
+            })
+        },
+  },
+    mounted() {
+        this.getversion()
+    },
 }
 </script>
 
