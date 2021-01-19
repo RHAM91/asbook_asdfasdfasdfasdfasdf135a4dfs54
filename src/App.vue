@@ -8,10 +8,10 @@
             Reporte
         </div>
         <div v-if="update == false" style="color: white;" id="version">
-            hola mundo
+            
         </div>
-        <div v-else class="btn_update" @click="pushversion">
-            push meee
+        <div v-else style="color: white;" @click="pushversion">
+            .
         </div>
     </div>
     <div class="contenedor">

@@ -312,11 +312,13 @@ export default {
 
             ipcRenderer.send('excel', this.datosExcel);
             
-            this.datos = []
-            this.datosExcel = []
-            this.year = ''
-            this.mes = ''
-            this.establecimiento = ''
+           setTimeout(() => {
+                this.datos = []
+                this.datosExcel = []
+                this.year = ''
+                this.mes = ''
+                this.establecimiento = ''
+           }, 3000);
 
 
         }
