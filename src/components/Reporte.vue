@@ -145,6 +145,7 @@ export default {
             loading: false,
             timeout: false,
             img: require(`@/assets/ripple2.gif`), // require(`@/assets/${localStorage.getItem('GIF')}.gif`),
+            puertox: 8585 // colocar PUERTO (con mayuscula) en las url de get
             
         }
     },
@@ -164,7 +165,7 @@ export default {
                 
 
                 try {
-                    let dat = await axios.get(`http://${IP}:${PUERTO}/api_sat/public/api/compras?m=${this.mes}&a=${this.year}`)
+                    let dat = await axios.get(`http://${IP}:${this.puertox}/api_sat/public/api/compras?m=${this.mes}&a=${this.year}`)
                     let arr = dat.data
                     this.datos = arr
 
@@ -247,7 +248,7 @@ export default {
             
         },
         get_ventas: async function(){
-            let dat = await axios.get(`http://${IP}:${PUERTO}/api_sat/public/api/ventas?m=${this.mes}&a=${this.year}`)
+            let dat = await axios.get(`http://${IP}:${this.puertox}/api_sat/public/api/ventas?m=${this.mes}&a=${this.year}`)
             let arrv = dat.data
             
             if (dat.data == null) {

@@ -10,7 +10,7 @@
         <div v-if="update == false" style="color: white;" id="version">
             
         </div>
-        <div v-else style="color: white;" @click="pushversion">
+        <div v-else style="color: white;">
             .
         </div>
     </div>
