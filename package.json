@@ -31,8 +31,8 @@
     "@vue/cli-service": "^4.0.0",
     "electron": "^11.2.0",
     "npm-check-updates": "^10.2.5",
-    "vue-cli-plugin-electron-builder": "^1.4.0",
-    "vue-template-compiler": "^2.6.10"
+    "vue-cli-plugin-electron-builder": "~2.0.0-rc.5",
+    "vue-template-compiler": "^2.6.11"
   },
   "postcss": {
     "plugins": {
